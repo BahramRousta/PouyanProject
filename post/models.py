@@ -1,12 +1,12 @@
 from django.db import models
 from models_utils.models import BaseModel
-from account.models import User
+from account.models import Profile
 
 
 class Post(BaseModel):
-
     content = models.CharField(max_length=250)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    like = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f'{self.author.username} + {self.content}'
+        return f'Post {self.content} by {self.author.user}'
