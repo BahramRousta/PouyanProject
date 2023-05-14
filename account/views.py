@@ -46,7 +46,7 @@ class RegisterView(AuthAPIView):
 class LoginAPIView(AuthAPIView):
     """Login API View. Receive username and password. Return access and refresh token."""
     serializer_class = LoginSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
