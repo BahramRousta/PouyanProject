@@ -43,7 +43,11 @@ INSTALLED_APPS = [
     'post.apps.PostConfig',
     'like.apps.LikeConfig',
     'comment.apps.CommentConfig',
+    'rest_framework',
+    'rest_framework_simplejwt',
 ]
+
+AUTH_USER_MODEL = 'account.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
