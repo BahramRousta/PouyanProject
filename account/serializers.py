@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from core.settings import SIMPLE_JWT
-from .models import User
+from .models import User, Profile
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -47,3 +47,15 @@ class ObtainTokenSerializer(serializers.Serializer):
     refresh_token_expiration = serializers.CharField(
         default=f"{SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()} seconds"
     )
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+
+    username = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Profile
+        fields = ['username']
+
+    def get_username(self, obj):
+        return obj.user.username
