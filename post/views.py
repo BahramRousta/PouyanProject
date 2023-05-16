@@ -1,6 +1,6 @@
 from django.db.models import Prefetch
 from rest_framework import status
-from rest_framework.generics import ListAPIView, get_object_or_404, RetrieveAPIView
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,7 +8,7 @@ from account.models import Profile
 from account.serializers import ProfileSerializer
 from .models import Post
 from .serializers import PostSerializer, GetUserPostSerializer
-from .paginations import CustomPagination
+from paginations.paginations import CustomPagination
 
 
 class PostAIPView(APIView):

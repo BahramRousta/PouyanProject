@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Comment
 from .serializers import CommentOnPostSerializer, ReplyOnCommentSerializer, CommentSerializer
+from paginations.paginations import CustomPagination
 
 
 class CommentAPIView(APIView):
@@ -25,6 +26,7 @@ class GetPostComment(ListAPIView):
 
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = CustomPagination
 
     def get_queryset(self):
         post_id = self.kwargs['post_id']
