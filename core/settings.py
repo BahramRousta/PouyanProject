@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     # New apps
     'account.apps.AccountConfig',
     'post.apps.PostConfig',
-    'like.apps.LikeConfig',
     'comment.apps.CommentConfig',
     'rest_framework',
     'rest_framework_simplejwt',
@@ -121,6 +120,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+}
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
