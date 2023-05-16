@@ -1,3 +1,4 @@
+from django.db.models import Prefetch
 from rest_framework import status
 from rest_framework.generics import ListAPIView, get_object_or_404, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -85,4 +86,10 @@ class PostsLikesAPIVIew(ListAPIView):
 
     def get_queryset(self):
         post_id = self.kwargs['post_id']
-        return get_object_or_404(Post, pk=post_id).like.all()
+        return Profile.objects.filter(
+            pk__in=Post.objects.filter(pk=post_id)
+            .prefetch_related(
+                Prefetch('like', queryset=Profile.objects.select_related('user'))
+            )
+            .values_list('like__pk', flat=True)
+        )
