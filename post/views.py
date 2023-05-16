@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from account.models import Profile
 from account.serializers import ProfileSerializer
-
 from .models import Post
 from .serializers import PostSerializer, GetUserPostSerializer
 
@@ -17,11 +16,11 @@ class PostAIPView(APIView):
         """Get User all posts"""
 
         try:
-            p =Profile.objects.get(user__username=username)
+            Profile.objects.get(user__username=username)
         except Profile.DoesNotExist:
             return Response(
                 data={"Message": f"User {username} dose not exist"},
-                status=status.HTTP_404_NOT_FOUND
+                status=status.HTTP_400_BAD_REQUEST
             )
 
         posts = Post.objects.filter(author__user__username=username)
