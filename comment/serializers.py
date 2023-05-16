@@ -1,6 +1,9 @@
-from rest_framework import serializers
+from rest_framework import serializers, status
+from rest_framework.response import Response
+
 from account.serializers import ProfileSerializer
 from comment.models import Comment, Reply
+from post.models import Post
 
 
 class ReplySerializer(serializers.ModelSerializer):
@@ -26,6 +29,12 @@ class CommentOnPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id', 'post_id', 'content']
+
+    def validate(self, attrs):
+        post_id = attrs.get('post_id')
+        if Post.objects.filter(id=post_id).first():
+            return attrs
+        raise serializers.ValidationError("Post not found.")
 
     def create(self, validated_data):
         validated_data['author'] = self.context['request'].user.profile
