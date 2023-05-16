@@ -8,10 +8,12 @@ from account.models import Profile
 from account.serializers import ProfileSerializer
 from .models import Post
 from .serializers import PostSerializer, GetUserPostSerializer
+from .paginations import CustomPagination
 
 
 class PostAIPView(APIView):
     permission_classes = [IsAuthenticated]
+    pagination_class = CustomPagination
 
     def get(self, request, username):
         """Get User all posts"""
@@ -83,6 +85,7 @@ class PostsLikesAPIVIew(ListAPIView):
 
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = CustomPagination
 
     def get_queryset(self):
         post_id = self.kwargs['post_id']
