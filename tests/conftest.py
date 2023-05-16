@@ -1,5 +1,6 @@
 import pytest
 from django.contrib.auth import get_user_model
+from comment.models import Comment
 from post.models import Post
 
 User = get_user_model()
@@ -18,4 +19,13 @@ def post(user):
     return Post.objects.create(
         content="posttest",
         author=user.profile
+    )
+
+
+@pytest.fixture
+def comment(user, post):
+    return Comment.objects.create(
+        author=user.profile,
+        post=post,
+        content="commenttes",
     )
