@@ -2,6 +2,7 @@ import pytest
 from django.contrib.auth import get_user_model
 from comment.models import Comment
 from post.models import Post
+from rest_framework.test import APIClient
 
 User = get_user_model()
 
@@ -29,3 +30,8 @@ def comment(user, post):
         post=post,
         content="commenttes",
     )
+
+
+@pytest.fixture
+def api_client():
+    return APIClient()
