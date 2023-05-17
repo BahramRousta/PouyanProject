@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db.models import Prefetch
 from rest_framework import status
 from rest_framework.generics import ListAPIView
@@ -26,6 +27,12 @@ class PostAIPView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        # Check if the data is already cached
+        cache_key = f'user_posts_{username}'
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return Response(cached_data, status=status.HTTP_200_OK)
+
         posts = Post.objects.filter(author__user__username=username)
 
         if len(posts) == 0:
@@ -35,6 +42,11 @@ class PostAIPView(APIView):
             )
 
         serializer = GetUserPostSerializer(posts, many=True)
+        data = serializer.data
+
+        # Cache the data for future requests
+        cache.set(cache_key, data)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -89,10 +101,22 @@ class PostsLikesAPIVIew(ListAPIView):
 
     def get_queryset(self):
         post_id = self.kwargs['post_id']
-        return Profile.objects.filter(
+
+        # Check if the data is already cached
+        cache_key = f'post_likes_{post_id}'
+        cached_data = cache.get(cache_key)
+
+        if cached_data:
+            return cached_data
+
+        queryset = Profile.objects.filter(
             pk__in=Post.objects.filter(pk=post_id)
             .prefetch_related(
                 Prefetch('like', queryset=Profile.objects.select_related('user'))
             )
             .values_list('like__pk', flat=True)
         )
+
+        # Cache the queryset for future requests
+        cache.set(cache_key, queryset)
+        return queryset

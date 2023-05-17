@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -30,7 +31,16 @@ class GetPostComment(ListAPIView):
 
     def get_queryset(self):
         post_id = self.kwargs['post_id']
-        return Comment.objects.filter(post_id=post_id).order_by('created')
+
+        cache_key = f'post_comments_{post_id}'
+        cached_data = cache.get(cache_key)
+
+        if cached_data:
+            return cached_data
+
+        queryset = Comment.objects.filter(post_id=post_id).order_by('created')
+        cache.set(cache_key, queryset)
+        return queryset
 
 
 class ReplyAPIView(APIView):
