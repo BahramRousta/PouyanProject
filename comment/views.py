@@ -1,3 +1,4 @@
+import logging
 from django.core.cache import cache
 from rest_framework import status
 from rest_framework.generics import ListAPIView
@@ -7,6 +8,8 @@ from rest_framework.views import APIView
 from .models import Comment
 from .serializers import CommentOnPostSerializer, ReplyOnCommentSerializer, CommentSerializer
 from paginations.paginations import CustomPagination
+
+logger = logging.getLogger('comment')
 
 
 class CommentAPIView(APIView):
@@ -19,6 +22,7 @@ class CommentAPIView(APIView):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        logger.info('Comment created on post {}'.format(request.data['post']))
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -36,10 +40,12 @@ class GetPostComment(ListAPIView):
         cached_data = cache.get(cache_key)
 
         if cached_data:
+            logger.info('Comment get from cache: {}'.format(cached_data))
             return cached_data
 
         queryset = Comment.objects.filter(post_id=post_id).order_by('created')
         cache.set(cache_key, queryset)
+        logger.info('Comment set into cache: {}'.format(cached_data))
         return queryset
 
 
@@ -53,4 +59,5 @@ class ReplyAPIView(APIView):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        logger.info("Created reply on the comment: {}".format(request.data['comment_id']))
         return Response(serializer.data, status=status.HTTP_201_CREATED)
