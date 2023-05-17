@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'comment.apps.CommentConfig',
     'rest_framework',
     'rest_framework_simplejwt',
+    'django_redis',
 ]
 
 AUTH_USER_MODEL = 'account.User'
@@ -144,3 +145,14 @@ SIMPLE_JWT = {
 }
 
 APPEND_SLASH = False
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://localhost:6379/0',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
+        'TIMEOUT': 300
+    }
+}

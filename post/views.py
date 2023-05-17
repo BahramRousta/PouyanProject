@@ -46,7 +46,6 @@ class PostAIPView(APIView):
 
         # Cache the data for future requests
         cache.set(cache_key, data)
-
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
