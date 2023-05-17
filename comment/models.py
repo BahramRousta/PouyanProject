@@ -4,8 +4,17 @@ from post.models import Post
 
 
 class Comment(models.Model):
-    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        db_index=True
+    )
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        db_index=True
+    )
     content = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
 
@@ -17,13 +26,19 @@ class Comment(models.Model):
 
 
 class Reply(models.Model):
-    author = models.ForeignKey(Profile,
-                               on_delete=models.CASCADE)
-    comment = models.ForeignKey(Comment,
-                                on_delete=models.CASCADE,
-                                null=True,
-                                blank=True,
-                                related_name='replies')
+    author = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        db_index=True
+    )
+    comment = models.ForeignKey(
+        Comment,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='replies',
+        db_index=True
+    )
     content = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
 

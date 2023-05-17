@@ -1,3 +1,4 @@
+import logging
 from django.contrib.auth import login
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -6,6 +7,8 @@ from rest_framework.views import APIView
 from .models import User
 from .serializers import LoginSerializer, ObtainTokenSerializer, UserSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+
+logger = logging.getLogger('account')
 
 
 class AuthAPIView(APIView):
@@ -18,9 +21,10 @@ class AuthAPIView(APIView):
                 'refresh_token': str(refresh),
                 'access_token': str(refresh.access_token)
             }).data
-
+            logger.info('Token created: {}'.format(user.username))
             return token
         except Exception as e:
+            logger.info('Failed to created token: {}'.format(str(e)))
             raise e
 
 
@@ -34,9 +38,12 @@ class RegisterView(AuthAPIView):
         serializer = self.serializer_classes(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+            logger.info('Registered user: {}'.format(user))
             login(request, user)
+            logger.info('User {} logged in'.format(user.username))
             return Response(data=self._obtain_token(request, user), status=status.HTTP_200_OK)
         else:
+            logger.info('Registration failed: {}'.format(serializer.errors))
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -56,16 +63,19 @@ class LoginAPIView(AuthAPIView):
             # Validate password
             if user and user.check_password(data["password"]):
                 login(request, user)
+                logger.info('User {} login successful.'.format(user.username))
                 return Response(
                     status=status.HTTP_200_OK,
                     data=self._obtain_token(request, user)
                 )
             else:
+                logger.info('User {} login failed.'.format(user.username))
                 return Response(
                     status=status.HTTP_403_FORBIDDEN,
                     data={"Message": "The user information is invalid."}
                 )
         else:
+            logger.info('Login failed: {}'.format(serializer.errors))
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data=serializer.errors

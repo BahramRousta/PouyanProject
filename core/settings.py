@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'comment.apps.CommentConfig',
     'rest_framework',
     'rest_framework_simplejwt',
+    'django_redis',
 ]
 
 AUTH_USER_MODEL = 'account.User'
@@ -144,3 +145,62 @@ SIMPLE_JWT = {
 }
 
 APPEND_SLASH = False
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://localhost:6379/0',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
+        'TIMEOUT': 300
+    }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'post_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/post_log.log',
+            'formatter': 'logs_formatter',
+        },
+        'comment_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/comment_log.log',
+            'formatter': 'logs_formatter',
+        },
+        'account_file': {
+                    'level': 'DEBUG',
+                    'class': 'logging.FileHandler',
+                    'filename': 'log/account_log.log',
+                    'formatter': 'logs_formatter',
+                },
+    },
+    'formatters': {
+        'logs_formatter': {
+            'format': '%(asctime)s %(levelname)s %(module)s %(funcName)s %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        }
+    },
+    'loggers': {
+        'post': {
+            'handlers': ['post_file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'comment': {
+            'handlers': ['comment_file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'account': {
+                    'handlers': ['account_file'],
+                    'level': 'DEBUG',
+                    'propagate': True,
+                },
+    }
+}
