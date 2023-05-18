@@ -1,5 +1,6 @@
 import logging
 from django.core.cache import cache
+from drf_yasg import openapi
 from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -8,6 +9,7 @@ from rest_framework.views import APIView
 from .models import Comment
 from .serializers import CommentOnPostSerializer, ReplyOnCommentSerializer, CommentSerializer
 from paginations.paginations import CustomPagination
+from drf_yasg.utils import swagger_auto_schema
 
 logger = logging.getLogger('comment')
 
@@ -16,8 +18,9 @@ class CommentAPIView(APIView):
     serializer_class = CommentOnPostSerializer
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(request_body=CommentOnPostSerializer)
     def post(self, request):
-        """Post new comment"""
+        """Create new comment on post"""
 
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
@@ -33,6 +36,11 @@ class GetPostComment(ListAPIView):
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('post_id', openapi.IN_PATH, description='ID of the post', type=openapi.TYPE_INTEGER)
+        ]
+    )
     def get_queryset(self):
         post_id = self.kwargs['post_id']
 
@@ -53,6 +61,7 @@ class ReplyAPIView(APIView):
     serializer_class = ReplyOnCommentSerializer
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(request_body=ReplyOnCommentSerializer)
     def post(self, request):
         """Create a reply on the specified comment"""
 
