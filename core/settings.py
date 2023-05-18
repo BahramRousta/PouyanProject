@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_redis',
+    'drf_yasg',
 ]
 
 AUTH_USER_MODEL = 'account.User'
@@ -203,4 +204,14 @@ LOGGING = {
                     'propagate': True,
                 },
     }
+}
+
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization'
+        }
+    },
 }
