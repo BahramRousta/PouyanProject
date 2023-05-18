@@ -27,7 +27,7 @@ class TestCommentOnPostSerializer:
         request.user = user
 
         data = {
-            'post_id': post.id,
+            'post': post.id,
             'content': 'Test comment',
         }
         serializer = CommentOnPostSerializer(data=data, context={'request': request})
