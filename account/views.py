@@ -36,7 +36,7 @@ class RegisterView(AuthAPIView):
     permission_classes = [AllowAny]
     serializer_classes = UserSerializer
 
-    @swagger_auto_schema(request_body=UserSerializer)
+    @swagger_auto_schema(request_body=UserSerializer, operation_id='RegisterUser')
     def post(self, request):
         serializer = self.serializer_classes(data=request.data)
         if serializer.is_valid():
@@ -55,7 +55,7 @@ class LoginAPIView(AuthAPIView):
     serializer_class = LoginSerializer
     permission_classes = [AllowAny]
 
-    @swagger_auto_schema(request_body=LoginSerializer)
+    @swagger_auto_schema(request_body=LoginSerializer, operation_id='LoginUser')
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():

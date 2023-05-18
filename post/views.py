@@ -11,6 +11,9 @@ from account.serializers import ProfileSerializer
 from .models import Post
 from .serializers import PostSerializer, GetUserPostSerializer
 from paginations.paginations import CustomPagination
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+
 
 logger = logging.getLogger('post')
 
@@ -19,8 +22,14 @@ class PostAIPView(APIView):
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('username', openapi.IN_PATH, description='username of user', type=openapi.TYPE_STRING)
+        ],
+        operation_id='GetPostsByUsername'
+    )
     def get(self, request, username):
-        """Get User all posts"""
+        """Receive username and return user's all posts"""
 
         try:
             Profile.objects.get(user__username=username)
@@ -54,6 +63,7 @@ class PostAIPView(APIView):
         logger.info('User post set into cache'.format(cache_key))
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(request_body=PostSerializer, operation_id='CreatePost')
     def post(self, request):
         """Create new post"""
 
@@ -70,6 +80,12 @@ class PostAIPView(APIView):
 class LikePostAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('post_id', openapi.IN_PATH, description='ID of post', type=openapi.TYPE_INTEGER)
+        ],
+        operation_id='LikeUserPost'
+    )
     def patch(self, request, post_id, format=None):
         """Like users' posts"""
 
@@ -129,3 +145,12 @@ class PostsLikesAPIVIew(ListAPIView):
         cache.set(cache_key, queryset)
         logger.info('Liked post set into cache'.format(cache_key))
         return queryset
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('post_id', openapi.IN_PATH, description='ID of post', type=openapi.TYPE_INTEGER)
+        ],
+        operation_id='GetUserWhoLikePost'
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
