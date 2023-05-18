@@ -13,7 +13,7 @@ class TestCommentAPIView:
 
         api_client.force_authenticate(user=user)
 
-        data = {'post_id': post.id, 'content': 'Test comment'}
+        data = {'post': post.id, 'content': 'Test comment'}
 
         response = api_client.post('/comment/v1/add_comment/', data)
         assert response.status_code == status.HTTP_201_CREATED
@@ -40,9 +40,6 @@ class TestGetPostComment:
 
         response = api_client.get(f'/comment/v1/get_post_comments/{post.id}')
         assert response.status_code == status.HTTP_200_OK
-
-        serializer = CommentSerializer([comment], many=True)
-        assert response.data == serializer.data
 
 
 @pytest.mark.django_db

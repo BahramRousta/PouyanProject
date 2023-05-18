@@ -18,7 +18,7 @@ from drf_yasg.utils import swagger_auto_schema
 logger = logging.getLogger('post')
 
 
-class PostAIPView(APIView):
+class GetPostAIPView(APIView):
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
 
@@ -62,6 +62,11 @@ class PostAIPView(APIView):
         cache.set(cache_key, data)
         logger.info('User post set into cache'.format(cache_key))
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CreatePostAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    pagination_class = CustomPagination
 
     @swagger_auto_schema(request_body=PostSerializer, operation_id='CreatePost')
     def post(self, request):

@@ -26,11 +26,12 @@ class TestPostAIPView:
         assert response.data == {'Message': 'User none dose not exist'}
 
     def test_get_user_posts_no_posts(self, api_client, user):
+        test_user = User.objects.create(username='user', password='password')
         api_client.force_authenticate(user=user)
 
-        response = api_client.get(f'/post/v1/get_posts/{user.username}')
+        response = api_client.get(f'/post/v1/get_posts/{test_user}')
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert response.data == {'Message': f'User {user.username} do not have any post yet.'}
+        assert response.data == {'Message': f'User {test_user} do not have any post yet.'}
 
     def test_create_post(self, api_client, user):
 

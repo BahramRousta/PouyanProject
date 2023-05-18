@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.settings import SIMPLE_JWT
+from core.settings.base import SIMPLE_JWT
 from .models import User, Profile
 
 
