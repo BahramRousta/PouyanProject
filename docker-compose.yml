@@ -1,4 +1,5 @@
 version: "3.9"
+
 services:
 
   db:
@@ -28,7 +29,7 @@ services:
       sh -c "python3 manage.py makemigrations --noinput && \
                  python3 manage.py migrate --noinput && \
                  python3 manage.py collectstatic --noinput && \
-                 python3 manage.py createsuperuser --username admin --noinput; \
+                 python3 manage.py createsuperuser --username admin --email admin@localhost --noinput; \
                  python3 manage.py runserver 0.0.0.0:8000"
     restart: always
     ports:
@@ -36,6 +37,7 @@ services:
     volumes:
       - ./src:/app
     environment:
+      - DJANGO_SETTINGS_MODULE=core.settings.prod
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=1
