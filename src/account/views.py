@@ -73,7 +73,7 @@ class LoginAPIView(AuthAPIView):
                     data=self._obtain_token(request, user)
                 )
             else:
-                logger.info('User {} login failed.'.format(user.username))
+                logger.info('User {} login failed.'.format(data["username"]))
                 return Response(
                     status=status.HTTP_403_FORBIDDEN,
                     data={"Message": "The user information is invalid."}
